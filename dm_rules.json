@@ -1,0 +1,35 @@
+{
+  "_note": "Nova Beauty Clinic comment-to-DM rules. Keywords work on every post. 'keywords' match as a whole word anywhere in the comment; 'short_keywords' only when the comment is just that word. Copied from the Blotato automations BOOK (9656), INFO (9657) and CHECKLIST (16759) on 16 Oct 2026.",
+  "exclude": ["unfollow", "scam", "report"],
+  "rules": [
+    {
+      "id": "checklist",
+      "keywords": ["checklist"],
+      "message": "Here's the checklist: what to ask any clinic before you book, and the red flags that mean walk away.\n\nQuestions? Reply here or WhatsApp us on 077 21 400 600.",
+      "buttons": [
+        {"title": "Read the checklist", "url": "https://www.novabeautyclinic.com/post/how-to-choose-an-aesthetics-clinic-in-london"},
+        {"title": "Book online", "url": "https://novabeautyclinic.com"},
+        {"title": "WhatsApp us", "url": "https://wa.me/447721400600"}
+      ]
+    },
+    {
+      "id": "book",
+      "keywords": ["book"],
+      "short_keywords": ["pores", "blackheads", "eyes", "spf", "sugar"],
+      "message": "Thanks for your comment. You can book your free consultation online, or message us on WhatsApp 077 21 400 600 and we'll find you a time.",
+      "buttons": [
+        {"title": "Book online", "url": "https://novabeautyclinic.com"},
+        {"title": "WhatsApp us", "url": "https://wa.me/447721400600"}
+      ]
+    },
+    {
+      "id": "info",
+      "keywords": ["info"],
+      "message": "Thanks for getting in touch. What would you like to know? Reply here and we'll answer soon. For a faster reply, WhatsApp us on 077 21 400 600.",
+      "buttons": [
+        {"title": "WhatsApp us", "url": "https://wa.me/447721400600"},
+        {"title": "Our website", "url": "https://novabeautyclinic.com"}
+      ]
+    }
+  ]
+}

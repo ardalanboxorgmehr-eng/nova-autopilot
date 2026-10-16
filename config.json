@@ -1,0 +1,11 @@
+{
+  "api_version": "v25.0",
+  "handle": "nova.beautyclinic",
+  "dm": {
+    "mode": "dry_run",
+    "start_at": "2026-10-16T00:00:00+0000",
+    "_note": "Starts in dry_run: it only logs what it would send. Switch mode to live once the token works AND the Blotato automations 9656, 9657, 16759 are turned off, so nobody gets two DMs.",
+    "dry_run_lookback_hours": 48,
+    "inbox": true
+  }
+}

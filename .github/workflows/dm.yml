@@ -1,0 +1,42 @@
+name: comment-to-DM
+on:
+  schedule:
+    - cron: "4,19,34,49 * * * *"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Override config for this run: dry_run or live"
+        type: choice
+        options: ["", "dry_run", "live"]
+        default: ""
+concurrency:
+  group: dm
+  cancel-in-progress: false
+permissions:
+  contents: write
+jobs:
+  dm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Reply to comments
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          DM_MODE: ${{ inputs.mode }}
+        run: python scripts/dm_reply.py
+      - name: Record who was sent a DM
+        if: always()
+        run: |
+          if [ -n "$(git status --porcelain state/dm_sent.json)" ]; then
+            git config user.name "nova-autopilot"
+            git config user.email "actions@github.com"
+            git add state/dm_sent.json
+            git commit -m "dm: record sent messages"
+            git pull --rebase --autostash origin "${GITHUB_REF_NAME}"
+            git push
+          else
+            echo "no new DMs"
+          fi
