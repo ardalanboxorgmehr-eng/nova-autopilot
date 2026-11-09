@@ -30,13 +30,35 @@ jobs:
       - name: Record who was sent a DM
         if: always()
         run: |
-          if [ -n "$(git status --porcelain state/dm_sent.json)" ]; then
-            git config user.name "nova-autopilot"
-            git config user.email "actions@github.com"
+          if [ -z "$(git status --porcelain state/dm_sent.json)" ]; then
+            echo "no new DMs"
+            exit 0
+          fi
+          git config user.name "nova-autopilot"
+          git config user.email "actions@github.com"
+          # Keep this run's records aside. If another run pushed while we were
+          # working, rebasing conflicts on state/dm_sent.json, the whole step
+          # fails and this run's records are thrown away, so everyone it
+          # messaged gets messaged again on a later run. Take the branch as it
+          # stands and merge our records into it instead. Ported from
+          # dana-autopilot, where this happened for real on 9 Nov 2026.
+          mkdir -p /tmp/ours
+          cp state/dm_sent.json /tmp/ours/ 2>/dev/null || true
+          for try in 1 2 3 4 5; do
+            git fetch origin "${GITHUB_REF_NAME}"
+            git reset --hard FETCH_HEAD
+            python scripts/merge_state.py /tmp/ours
+            if [ -z "$(git status --porcelain state/)" ]; then
+              echo "nothing new to record"
+              exit 0
+            fi
             git add state/dm_sent.json
             git commit -m "dm: record sent messages"
-            git pull --rebase --autostash origin "${GITHUB_REF_NAME}"
-            git push
-          else
-            echo "no new DMs"
-          fi
+            if git push; then
+              exit 0
+            fi
+            echo "push lost a race, merging again (attempt $try)"
+            sleep $((try * 5))
+          done
+          echo "could not record this run's messages after 5 tries"
+          exit 1
